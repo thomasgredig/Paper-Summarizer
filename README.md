@@ -2,6 +2,8 @@
  Summarizes Research Paper's Introductions
  
 # How to use
+
+You can `knit` the `report.Introductions.Rmd` project with parameters and then enter the path with the research papers. It will then generate a Powerpoint or Slidy HTML presentation.
  
 ## Notes
 

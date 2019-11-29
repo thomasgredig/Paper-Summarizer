@@ -2,12 +2,14 @@
 title: "Introduction"
 author: "Thomas Gredig"
 date: "11/28/2019"
+output:
+  powerpoint_presentation:
+    reference_doc: template.pptx
+  slidy_presentation:
+    footer: Copyright (c) 2019, Thomas Gredig
+  beamer_presentation: default
 params:
   path.RAWb: '.'
-output:
-  powerpoint_presentation: default
-  slidy_presentation: default
-  beamer_presentation: default
 ---
 
 ```{r setup, include=FALSE}
@@ -17,13 +19,16 @@ library(pdftools)
 library(stringr)
 source('config.R')
 
+if (params$path.RAWb != '.') { path.RAW = params$path.RAWb }
+print(params$path.RAWb)
 file.list = file.path(path.RAW,
                       dir(path.RAW, 
                           pattern='.*\\.pdf$', 
                           recursive = FALSE))
 
 r = data.frame()
-for(filename in file.list[1:100]) {
+if (length(file.list)>50) { file.list = file.list[1:50] }
+for(filename in file.list) {
   q = pdf_text(filename)
   
   # find individual sentences
@@ -37,7 +42,7 @@ for(filename in file.list[1:100]) {
     m = m[1]
     grep(title.firstword,q1,ignore.case = TRUE)[1] -> m1
     title = gsub('\\s\\s+',' ',q1[m1])
-    intro.text = gsub('\\s\\s+',' ',paste(q1[(m):(m+4)],collapse=' '))
+    intro.text = gsub('\\s\\s+',' ',paste(q1[(m):(m+8)],collapse=' '))
     r = rbind(r,
               data.frame(
                 title,
@@ -48,13 +53,13 @@ for(filename in file.list[1:100]) {
 r = as.data.frame(lapply(r, as.character))
 r$title <- gsub("[^[:alnum:][:blank:]?&/\\-]", "", r$title)
 r$intro <- gsub("[^[:alnum:][:blank:]?&/\\-]", "", r$intro)
-r$all = paste('\n## ',r$title,'\n',r$intro,'\n')
+r$all = paste('\n### ',r$title,'\n',r$intro,'\n')
 
 ```
 
-## R Markdown
+### R Markdown
 
-This presentation summarizes papers in the folder `r path.RAW`. It analyzed `r nrow(r)` papers, which are listed in alphabetical order by author on the next slides.
+This presentation summarizes papers in the folder `r path.RAW` on `r Sys.Date()`. It analyzed `r nrow(r)` papers, which are listed in alphabetical order by author on the next slides. The paper is skipped, when no introduction is found. 
 
 
 `r paste(r$all, collapse='')`
