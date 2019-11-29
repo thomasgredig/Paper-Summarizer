@@ -1,5 +1,15 @@
-# demonstration of extracting the introduction paragraph from
-# a PDF file
+---
+title: "Introduction"
+author: "Thomas Gredig"
+date: "11/28/2019"
+output:
+  slidy_presentation: default
+  powerpoint_presentation: default
+  beamer_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
 
 library(pdftools)
 library(stringr)
@@ -11,7 +21,7 @@ file.list = file.path(path.RAW,
                           recursive = FALSE))
 
 r = data.frame()
-for(filename in file.list[1:10]) {
+for(filename in file.list[1:5]) {
   q = pdf_text(filename)
   
   # find individual sentences
@@ -33,8 +43,19 @@ for(filename in file.list[1:10]) {
               ))
   }
 }
-
 r = lapply(r, as.character)
-str(r)
-r$all = paste('## ',r$title,'\n',r$intro)
-r$all[1]
+r$all = paste('## ',r$title,'\n',r$intro,'\n\n ')
+r$all <- gsub("[^[:alnum:][:blank:]?&/\\-\\n\\#]", "", r$all)
+```
+
+## R Markdown
+
+This presentation summarizes papers in this folder:
+
+* this
+* that
+
+`r paste(r$all, collapse='')`
+
+
+
