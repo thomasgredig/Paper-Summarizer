@@ -2,9 +2,11 @@
 title: "Introduction"
 author: "Thomas Gredig"
 date: "11/28/2019"
+params:
+  path.RAWb: '.'
 output:
-  slidy_presentation: default
   powerpoint_presentation: default
+  slidy_presentation: default
   beamer_presentation: default
 ---
 
@@ -21,7 +23,7 @@ file.list = file.path(path.RAW,
                           recursive = FALSE))
 
 r = data.frame()
-for(filename in file.list[1:5]) {
+for(filename in file.list[1:100]) {
   q = pdf_text(filename)
   
   # find individual sentences
@@ -34,8 +36,8 @@ for(filename in file.list[1:5]) {
   if(length(m)>0) {
     m = m[1]
     grep(title.firstword,q1,ignore.case = TRUE)[1] -> m1
-    title = gsub('\\s\\s+','',q1[m1])
-    intro.text = gsub('\\s\\s+','',paste(q1[(m+1):(m+8)],collapse=' '))
+    title = gsub('\\s\\s+',' ',q1[m1])
+    intro.text = gsub('\\s\\s+',' ',paste(q1[(m):(m+4)],collapse=' '))
     r = rbind(r,
               data.frame(
                 title,
@@ -43,17 +45,17 @@ for(filename in file.list[1:5]) {
               ))
   }
 }
-r = lapply(r, as.character)
-r$all = paste('## ',r$title,'\n',r$intro,'\n\n ')
-r$all <- gsub("[^[:alnum:][:blank:]?&/\\-\\n\\#]", "", r$all)
+r = as.data.frame(lapply(r, as.character))
+r$title <- gsub("[^[:alnum:][:blank:]?&/\\-]", "", r$title)
+r$intro <- gsub("[^[:alnum:][:blank:]?&/\\-]", "", r$intro)
+r$all = paste('\n## ',r$title,'\n',r$intro,'\n')
+
 ```
 
 ## R Markdown
 
-This presentation summarizes papers in this folder:
+This presentation summarizes papers in the folder `r path.RAW`. It analyzed `r nrow(r)` papers, which are listed in alphabetical order by author on the next slides.
 
-* this
-* that
 
 `r paste(r$all, collapse='')`
 
